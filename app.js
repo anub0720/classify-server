@@ -16,9 +16,11 @@ const chatRouter = require("./routes/Chatpage");
 const classRouter = require('./routes/classes');
 //const scheduleRouter = require('./routes/schedule');
 const announcementRouter = require('./routes/announcements');
-
+const CLIENT_URL = process.env.NODE_ENV === "production" 
+  ? "https://classify-sage.vercel.app/" 
+  : "http://localhost:8080";
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173",  // Update this with your production client URL
+  origin: CLIENT_URL,  // Update this with your production client URL
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionSuccessStatus: 200,
@@ -43,7 +45,12 @@ mongoose.connect(DB)
   });
 
 // Remove the app.listen() for serverless deployment on Vercel
-
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 8080;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 // Import the Chatbot model
 const Chatbot = require('./models/Chatbot');
 
