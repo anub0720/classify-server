@@ -4,7 +4,6 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
-const cron = require("node-cron");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config({ path: ".env" });
@@ -17,8 +16,9 @@ const chatRouter = require("./routes/Chatpage");
 const classRouter = require('./routes/classes');
 //const scheduleRouter = require('./routes/schedule');
 const announcementRouter = require('./routes/announcements');
+
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL || "http://localhost:5173",  // Update this with your production client URL
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionSuccessStatus: 200,
@@ -33,7 +33,8 @@ app.use("/Chatpage", chatRouter);
 app.use('/classes', classRouter);
 //app.use('/schedule', scheduleRouter);
 app.use('/announcement', announcementRouter);
-main()
+
+mongoose.connect(DB)
   .then(() => {
     console.log("Connection successful");
   })
@@ -41,25 +42,19 @@ main()
     console.log(err);
   });
 
-async function main() {
-  await mongoose.connect(DB);
-}
-
-
-
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
-});
+// Remove the app.listen() for serverless deployment on Vercel
 
 // Import the Chatbot model
 const Chatbot = require('./models/Chatbot');
 
-// Schedule a task to clear the collection every night at 00:00
-cron.schedule('0 0 * * *', async () => {
-  try {
-    await Chatbot.deleteMany({});
-    console.log("Chatbot collection cleared");
-  } catch (error) {
-    console.error("Error clearing Chatbot collection:", error);
-  }
-});
+// Remove the cron job or move it to another service since it won't work well in a serverless environment
+// cron.schedule('0 0 * * *', async () => {
+//   try {
+//     await Chatbot.deleteMany({});
+//     console.log("Chatbot collection cleared");
+//   } catch (error) {
+//     console.error("Error clearing Chatbot collection:", error);
+//   }
+// });
+
+module.exports = app;  // Export the app for use in a serverless function
