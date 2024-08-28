@@ -17,7 +17,7 @@ const classRouter = require('./routes/classes');
 //const scheduleRouter = require('./routes/schedule');
 const announcementRouter = require('./routes/announcements');
 const CLIENT_URL = process.env.NODE_ENV === "production" 
-  ? "https://classify-sage.vercel.app/" 
+  ? "https://classify-sage.vercel.app" 
   : "http://localhost:8080";
 const corsOptions = {
   origin: CLIENT_URL,  // Update this with your production client URL
